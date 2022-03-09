@@ -27,8 +27,8 @@ class Audio():
             if len(self.queue[self.ctx.guild.id]) > 0:
                 try:
                     await self.ctx.author.voice.channel.connect()
-                except:
-                    pass
+                    #self.voice = discord.utils.get(self.bot.voice_clients, guild=self.ctx.guild)
+                except: pass
 
                 self.voice = discord.utils.get(self.bot.voice_clients, guild=self.ctx.guild)
 
@@ -88,6 +88,15 @@ class Audio():
         except:
             return '`Nothing is playing!`'
 
+    def get_queue(self):
+        if self.queue[self.ctx.guild.id] == []: return '`Nothing in queue`'
+
+        message = ''
+        for i in range(0, len(self.queue[self.ctx.guild.id])):
+            message += f'{i + 1}. {self.queue[self.ctx.guild.id][i]}\n'
+        
+        return message
+
 
 #Main command handler
 class Client(commands.Cog):
@@ -126,10 +135,10 @@ class Client(commands.Cog):
     @commands.command(name='leave')
     async def leave(self, ctx):
         await self.audio.voice.disconnect()
-        
 
-
-
+    @commands.command(name='queue')
+    async def queue(self, ctx):
+        await ctx.send(self.audio.get_queue())
 
 
 bot = commands.Bot(command_prefix='!')
