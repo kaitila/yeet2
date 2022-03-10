@@ -1,7 +1,7 @@
 from pytube import YouTube
 from pytube import Search
 
-from utils import Utils
+from .parent import Globals, Utils
 
 import re
 import os

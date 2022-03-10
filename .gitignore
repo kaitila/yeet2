@@ -1,3 +1,4 @@
 .env
 songs/*
 test.py
+utils/__pycache__/*

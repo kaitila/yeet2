@@ -1,32 +1,31 @@
 import discord
 from discord.ext import commands
 
-from utils import Utils
+from .parent import Globals, Utils
 
 import asyncio
 
 
 class Audio(Utils):
-    def __init__(self, bot, ctx):
+    def __init__(self, bot):
         self.audio_player = bot.loop.create_task(self.audio_player())
-        Utils.__init__(self, bot, ctx)
+        Utils.__init__(self, bot)
 
     async def audio_player(self):
         """
-        Ongoing event loop to play the first item in queue
+        Ongoing event loop to play the first item in {Globals.queue}
 
         """
         while True:
             await asyncio.sleep(1)
-            if len(self.queue[self.ctx.guild.id]) > 0:
+            if len(Globals.queue) > 0:
                 try:
-                    await self.ctx.author.voice.channel.connect()
-                    #self.voice = discord.utils.get(self.bot.voice_clients, guild=self.ctx.guild)
+                    await Globals.ctx.author.voice.channel.connect()
                 except: pass
+                
+                Globals.voice = discord.utils.get(self.bot.voice_clients, guild=Globals.ctx.guild)
 
-                self.voice = discord.utils.get(self.bot.voice_clients, guild=self.ctx.guild)
-
-                if not self.voice.is_playing():
-                    self.voice.play(discord.FFmpegPCMAudio(f"{self.queue[self.ctx.guild.id][0]}.mp3"))
-                    await self.ctx.send(f'`Now playing: {self.queue[self.ctx.guild.id][0]}`')
-                    self.queue[self.ctx.guild.id].pop()
+                if not Globals.voice.is_playing():
+                    Globals.voice.play(discord.FFmpegPCMAudio(f"{Globals.queue[0]}.mp3"))
+                    await Globals.ctx.send(f'`Now playing: {Globals.queue[0]}`')
+                    Globals.queue.pop()

@@ -1,16 +1,14 @@
-from utils import Utils
+from .parent import Globals, Utils
 
 
 class Actions(Utils):
-    def add_to_queue(self, title, ctx):
+    def add_to_queue(self, title):
         """
         Adds {title} to {self.queue}
 
         """
-        try: self.queue[ctx.guild.id]
-        except KeyError: self.queue[ctx.guild.id] = []
 
-        self.queue[ctx.guild.id].append(title)
+        Globals.queue.append(title)
         #print(self.queue)
 
     def get_queue(self):
@@ -18,12 +16,19 @@ class Actions(Utils):
         Returns a message: str including all the items in {self.queue}
 
         """
-        if self.queue[self.ctx.guild.id] == []: return '`Nothing in queue`'
+        if Globals.queue == []: return '`Nothing in queue`'
 
-        message = ''
-        for i in range(0, len(self.queue[self.ctx.guild.id])):
-                message += f'{i + 1}. {self.queue[self.ctx.guild.id][i]}\n'
+        message = '`'
+        for i in range(0, len(Globals.queue)):
+                message += f'{i + 1}. {Globals.queue[i]}\n'
 
-        return message
+        return message + '`'
+
+    def skip(self):
+        try:
+            Globals.voice.stop()
+            return '`Skipping the current song!`'
+        except:
+            return '`Nothing is playing!`'
 
 
