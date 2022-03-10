@@ -17,14 +17,14 @@ class Audio():
     def __init__(self, bot, ctx):
         self.bot = bot
         self.audio_player = bot.loop.create_task(self.audio_player())
-        self.queue = {}
+        self.queue = []
         self.ctx = ctx
 
     #Automatically plays audio from the queue
     async def audio_player(self):
         while True:
             await asyncio.sleep(1)
-            if len(self.queue[self.ctx.guild.id]) > 0:
+            if len(self.queue) > 0:
                 try:
                     await self.ctx.author.voice.channel.connect()
                     #self.voice = discord.utils.get(self.bot.voice_clients, guild=self.ctx.guild)
@@ -33,17 +33,17 @@ class Audio():
                 self.voice = discord.utils.get(self.bot.voice_clients, guild=self.ctx.guild)
 
                 if not self.voice.is_playing():
-                    self.voice.play(discord.FFmpegPCMAudio(f"{self.queue[self.ctx.guild.id][0]}.mp3"))
-                    await self.ctx.send(f'`Now playing: {self.queue[self.ctx.guild.id][0]}`')
-                    self.queue[self.ctx.guild.id].pop()
+                    self.voice.play(discord.FFmpegPCMAudio(f"{self.queue[0]}.mp3"))
+                    await self.ctx.send(f'`Now playing: {self.queue[0]}`')
+                    self.queue.pop()
 
 
         
     def add_to_queue(self, title, ctx):
-        try: self.queue[ctx.guild.id]
-        except KeyError: self.queue[ctx.guild.id] = []
+        #try: self.queue[ctx.guild.id]
+        #except KeyError: self.queue[ctx.guild.id] = []
 
-        self.queue[ctx.guild.id].append(title)
+        self.queue.append(title)
         print(self.queue)     
 
     def search(self, search):
@@ -89,11 +89,11 @@ class Audio():
             return '`Nothing is playing!`'
 
     def get_queue(self):
-        if self.queue[self.ctx.guild.id] == []: return '`Nothing in queue`'
+        if self.queue == []: return '`Nothing in queue`'
 
         message = ''
-        for i in range(0, len(self.queue[self.ctx.guild.id])):
-            message += f'{i + 1}. {self.queue[self.ctx.guild.id][i]}\n'
+        for i in range(0, len(self.queue)):
+            message += f'{i + 1}. {self.queue[i]}\n'
         
         return message
 
